@@ -1,5 +1,7 @@
-import { db } from "@/lib/firebase";
 import { useState } from "react";
+
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function AddBirthday() {
   const [name, setName] = useState("");
@@ -7,36 +9,54 @@ export default function AddBirthday() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await db.collection("birthdays").add({
-      name,
-      birthdate: new Date(birthdate).toISOString(),
-      userId: session.user.id,
-    });
-    setName("");
-    setBirthdate("");
+    if (!name || !birthdate) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      await addDoc(collection(db, "birthdays"), {
+        name,
+        birthdate: new Date(birthdate).toISOString(),
+        userId: auth.currentUser.uid,
+      });
+      alert("Birthday added successfully! 🎉");
+      setName("");
+      setBirthdate("");
+    } catch (error) {
+      console.error("Error adding birthday:", error);
+      alert("Failed to add birthday. Please try again.");
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="p-2 border rounded"
-      />
-      <input
-        type="date"
-        value={birthdate}
-        onChange={(e) => setBirthdate(e.target.value)}
-        className="p-2 border rounded ml-2"
-      />
-      <button
-        type="submit"
-        className="ml-2 px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Add Birthday
-      </button>
-    </form>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-purple-700 mb-4">
+        Add a Birthday
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          type="text"
+          placeholder="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-3 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          required
+        />
+        <input
+          type="date"
+          value={birthdate}
+          onChange={(e) => setBirthdate(e.target.value)}
+          className="w-full p-3 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          required
+        />
+        <button
+          type="submit"
+          className="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition duration-300"
+        >
+          Add Birthday
+        </button>
+      </form>
+    </div>
   );
 }

@@ -1,11 +1,25 @@
-import { useSession } from "next-auth/react";
-import BirthdayList from "../components/BirthdayList";
-import AddBirthday from "../components/AddBirthday";
+import { useEffect, useState } from "react";
+
+import AddBirthday from "@/app/component/AddBirthday";
+import BirthdayList from "@/app/component/BirthdayList";
+import { auth } from "@/lib/firebase";
 
 export default function Dashboard() {
-  const { data: session } = useSession();
+  const [user, setUser] = useState(null);
 
-  if (!session) {
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (!user) {
     return <p className="p-4">Please sign in to access the dashboard.</p>;
   }
 
