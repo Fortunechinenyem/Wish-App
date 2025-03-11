@@ -8,7 +8,7 @@ export default function Document() {
 
         <meta
           name="description"
-          content="An App to wish loved ones well on special occasions"
+          content="An App used to wish loved ones well on special occasions"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
