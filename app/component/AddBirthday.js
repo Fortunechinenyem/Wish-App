@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { collection, addDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 
 export default function AddBirthday() {
   const [name, setName] = useState("");
