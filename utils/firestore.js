@@ -4,7 +4,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 /**
  * Adds a user to the Firestore database.
  *
- * @param {Object} user
+ * @param {Object} user - The user object from Firebase Authentication.
  * @returns {Promise<void>}
  */
 export const addUserToFirestore = async (user) => {
@@ -15,8 +15,7 @@ export const addUserToFirestore = async (user) => {
       uid: user.uid,
       name: user.displayName || "",
       email: user.email,
-      points: 0,
-      badges: [],
+
       createdAt: serverTimestamp(),
     });
 

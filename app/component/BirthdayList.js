@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 
@@ -7,21 +6,24 @@ export default function BirthdayList() {
   const [birthdays, setBirthdays] = useState([]);
 
   useEffect(() => {
-    if (!auth.currentUser) return;
+    if (!auth.currentUser) return; // Ensure the user is logged in
 
+    // Create a query to fetch birthdays for the current user
     const q = query(
       collection(db, "birthdays"),
       where("userId", "==", auth.currentUser.uid)
     );
 
+    // Subscribe to real-time updates
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setBirthdays(data);
+      setBirthdays(data); // Update the state with the fetched data
     });
 
+    // Cleanup subscription on unmount
     return () => unsubscribe();
   }, []);
 
