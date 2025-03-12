@@ -1,4 +1,4 @@
-This is an App used to send wishes to loved ones on their special occassion, built with next js
+This is an App used to send wishes to loved ones on their special occasion, built with next js
 
 ### Features Breakdown
 
