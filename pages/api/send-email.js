@@ -1,3 +1,4 @@
+// api/send-email.js
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
@@ -7,10 +8,12 @@ export default async function handler(req, res) {
 
   const { email, message } = req.body;
 
+  // Validate input
   if (!email || !message) {
     return res.status(400).json({ message: "Email and message are required" });
   }
 
+  // Create a Nodemailer transporter
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -19,6 +22,7 @@ export default async function handler(req, res) {
     },
   });
 
+  // Define email options
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
