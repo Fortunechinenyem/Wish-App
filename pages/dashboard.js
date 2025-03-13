@@ -4,6 +4,7 @@ import BirthdayList from "@/app/component/BirthdayList";
 import { auth } from "@/lib/firebase";
 import Footer from "@/app/component/Footer";
 import ExportButton from "@/app/component/ExportButton";
+import Navbar from "@/app/component/Navbar";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -26,15 +27,18 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl mb-5 text-center font-bold">
-        Your Birthday Dashboard
-      </h1>
+    <>
+      <Navbar />
+      <div className="p-4">
+        <h1 className="text-2xl mb-5 text-center font-bold">
+          Your Birthday Dashboard
+        </h1>
 
-      <AddBirthday />
-      <BirthdayList birthdays={birthdays} setBirthdays={setBirthdays} />
-      <ExportButton birthdays={birthdays} />
-      <Footer />
-    </div>
+        <AddBirthday />
+        <BirthdayList birthdays={birthdays} setBirthdays={setBirthdays} />
+        <ExportButton birthdays={birthdays} />
+        <Footer />
+      </div>
+    </>
   );
 }
