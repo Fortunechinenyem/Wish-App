@@ -6,6 +6,28 @@ export default function AddBirthday() {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
 
+  const sendBirthdayReminder = async (email, message) => {
+    try {
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, message }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+      } else {
+        alert(data.message);
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      alert("Failed to send email. Please try again.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -26,23 +48,12 @@ export default function AddBirthday() {
         birthdate
       ).toLocaleDateString()}!`;
 
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: userEmail, message }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-      } else {
-        alert(data.message);
-      }
+      await sendBirthdayReminder(userEmail, message);
 
       setName("");
       setBirthdate("");
+
+      alert("Birthday added successfully! 🎉");
     } catch (error) {
       console.error("Error adding birthday:", error);
       alert("Failed to add birthday. Please try again.");
