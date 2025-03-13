@@ -8,32 +8,11 @@ import { toast } from "react-toastify";
 export default function AddBirthday() {
   const [name, setName] = useState("");
   const [birthdate, setBirthdate] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [message, setMessage] = useState("");
   const [showConfetti, setShowConfetti] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-
-  const sendBirthdayReminder = async (email, message) => {
-    try {
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, message }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message);
-      } else {
-        alert(data.message);
-      }
-    } catch (error) {
-      console.error("Error sending email:", error);
-      alert("Failed to send email. Please try again.");
-    }
-  };
 
   const sendEmail = async (email, message) => {
     try {
@@ -71,7 +50,7 @@ export default function AddBirthday() {
       if (response.ok) {
         toast.success(data.message);
       } else {
-        toast.error(data.message);
+        toast.error(data.error || data.message);
       }
     } catch (error) {
       console.error("Error sending SMS:", error);
@@ -84,7 +63,8 @@ export default function AddBirthday() {
     setIsLoading(true);
 
     if (!name || !birthdate) {
-      alert("Please fill in all fields.");
+      toast.error("Please fill in all required fields.");
+      setIsLoading(false);
       return;
     }
 
@@ -96,28 +76,31 @@ export default function AddBirthday() {
       });
 
       const userEmail = auth.currentUser.email;
-      const message = `Don't forget to wish ${name} a happy birthday on ${new Date(
+      const defaultMessage = `Don't forget to wish ${name} a happy birthday on ${new Date(
         birthdate
       ).toLocaleDateString()}!`;
 
-      await sendBirthdayReminder(userEmail, message);
+      const personalizedMessage = message || defaultMessage;
 
-      await sendEmail(userEmail, message);
+      await sendEmail(userEmail, personalizedMessage);
 
       if (phoneNumber) {
-        await sendSMS(phoneNumber, message);
+        await sendSMS(phoneNumber, personalizedMessage);
       }
 
       setName("");
       setBirthdate("");
       setPhoneNumber("");
+      setMessage("");
 
-      toast.success("Birthday added successfully! ");
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 5000);
       setShowSuccessModal(true);
       setTimeout(() => setShowSuccessModal(false), 3000);
+      toast.success("Birthday added successfully! ");
     } catch (error) {
       console.error("Error adding birthday:", error);
-      alert("Failed to add birthday. Please try again.");
+      toast.error("Failed to add birthday. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -132,7 +115,7 @@ export default function AddBirthday() {
         transition={{ duration: 0.5 }}
         className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full"
       >
-        <h2 className="text-2xl font-bold text-purple-700 mb-4">
+        <h2 className="text-2xl text-center text-purple-700 font-bold cc mb-4">
           Add a Birthday
         </h2>
         {showSuccessModal && (
@@ -178,6 +161,38 @@ export default function AddBirthday() {
               className=" left-3 top-3 text-gray-400 transition-all duration-200 peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-purple-600 bg-white px-1"
             >
               Birthdate
+            </label>
+          </div>
+          <div className="relative">
+            <input
+              type="text"
+              id="phoneNumber"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              className="w-full p-3 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 peer"
+              placeholder=" "
+            />
+            <label
+              htmlFor="phoneNumber"
+              className=" left-3 top-3 text-gray-400 transition-all duration-200 peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-purple-600 bg-white px-1"
+            >
+              Phone Number (optional)
+            </label>
+          </div>
+          <div className="relative">
+            <textarea
+              id="message"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full p-3 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 peer"
+              placeholder=" "
+              rows="4"
+            />
+            <label
+              htmlFor="message"
+              className="left-3 top-3 text-gray-400 transition-all duration-200 peer-placeholder-shown:text-base peer-placeholder-shown:top-3 peer-focus:-top-3 peer-focus:text-sm peer-focus:text-purple-600 bg-white px-1"
+            >
+              Personalized Message (optional)
             </label>
           </div>
           <button

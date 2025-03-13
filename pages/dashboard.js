@@ -25,7 +25,9 @@ export default function Dashboard() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold">Your Birthday Dashboard</h1>
+      <h1 className="text-2xl mb-5 text-center font-bold">
+        Your Birthday Dashboard
+      </h1>
       <AddBirthday />
       <BirthdayList />
     </div>
