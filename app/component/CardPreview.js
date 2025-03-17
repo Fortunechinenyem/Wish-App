@@ -1,5 +1,6 @@
+import { useRef } from "react";
 import { motion } from "framer-motion";
-import html2canvas from "html2canvas";
+import { drawHTML } from "rasterizehtml";
 
 export default function CardPreview({ message, image, template }) {
   const cardVariants = {
@@ -7,19 +8,35 @@ export default function CardPreview({ message, image, template }) {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
   };
 
+  const cardRef = useRef(null);
+
   const handleDownload = () => {
-    const cardElement = document.getElementById("greeting-card");
-    html2canvas(cardElement).then((canvas) => {
-      const link = document.createElement("a");
-      link.download = "greeting-card.png";
-      link.href = canvas.toDataURL();
-      link.click();
-    });
+    const cardElement = cardRef.current;
+    if (!cardElement) {
+      console.error("Card element not found!");
+      return;
+    }
+
+    drawHTML(cardElement.outerHTML, {
+      width: cardElement.offsetWidth,
+      height: cardElement.offsetHeight,
+    })
+      .then((renderResult) => {
+        const canvas = renderResult.image;
+        const link = document.createElement("a");
+        link.download = "greeting-card.png";
+        link.href = canvas.toDataURL();
+        link.click();
+      })
+      .catch((error) => {
+        console.error("Error capturing card:", error);
+      });
   };
 
   return (
     <>
       <motion.div
+        ref={cardRef} // Ensure this is correctly attached
         variants={cardVariants}
         initial="hidden"
         animate="visible"
@@ -37,6 +54,7 @@ export default function CardPreview({ message, image, template }) {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
+              onLoad={() => console.log("Image loaded")} // Ensure images are loaded
             />
           )}
           <motion.p
