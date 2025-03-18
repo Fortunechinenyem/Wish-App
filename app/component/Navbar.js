@@ -38,12 +38,12 @@ export default function Navbar() {
         </button>
 
         <div className="hidden md:flex space-x-8 items-center">
-          <Link
+          {/* <Link
             href="/create-card"
             className="text-indigo-900 hover:text-purple-600 transition duration-300"
           >
             Create Card
-          </Link>
+          </Link> */}
           <Link
             href="/dashboard"
             className="text-indigo-900 hover:text-purple-600 transition duration-300"
@@ -59,13 +59,13 @@ export default function Navbar() {
         }`}
       >
         <div className="flex flex-col space-y-4 text-center">
-          <Link
+          {/* <Link
             href="/create-card"
             className="text-indigo-900 hover:text-purple-600 transition duration-300"
             onClick={toggleMenu}
           >
             Create Card
-          </Link>
+          </Link> */}
           <Link
             href="/dashboard"
             className="text-indigo-900 hover:text-purple-600 transition duration-300"
